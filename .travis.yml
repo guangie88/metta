@@ -1,0 +1,36 @@
+dist: trusty
+sudo: false
+language: cpp
+
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - gcc-5
+      - g++-5
+      - cmake3
+      - doxygen
+
+script:
+- export CC=/usr/bin/gcc-5 CXX=/usr/bin/g++-5
+- git submodule update --init --recursive
+- mkdir build-debug
+- cd build-debug
+- cmake .. -DCMAKE_BUILD_TYPE=Debug
+- cmake --build . -- -j2
+- cd ..
+- mkdir build-release
+- cd build-release
+- cmake .. -DCMAKE_BUILD_TYPE=Release
+- cmake --build . -- -j2
+- cd ..
+
+after_success:
+- doxygen Doxyfile
+
+# run unit test and code coverage
+- ./build-debug/bin/unit_test
+- gcov ./build-debug/CMakeFiles/unit_test.dir/src/unit_test/unit_test.cpp.gcno
+- bash <(curl -s https://codecov.io/bash)
+
