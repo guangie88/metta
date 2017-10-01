@@ -13,7 +13,9 @@ SCENARIO("Concatenate compile-time strings", "[concat]") {
         constexpr auto LHS = make_str("Key: ");
     THEN("Should be able to compile-time concatenate") {
         constexpr auto RESULT = LHS + "Value";
-    THEN("And check for concatenate result") {
-        REQUIRE(strcmp(RESULT.data(), "Key: Value") == 0);
-    }}}}
+    THEN("And check for concatenation result using compile-time comparison") {
+        REQUIRE(RESULT == "Key: Value");
+    THEN("And also check for concatenation result using strcmp runtime comparison") {
+        REQUIRE(strcmp(RESULT.c_str(), "Key: Value") == 0);
+    }}}}}
 }
