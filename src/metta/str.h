@@ -10,6 +10,7 @@
 #include <cstddef>
 
 namespace metta {
+
     // declaration section
 
     /**
@@ -20,18 +21,27 @@ namespace metta {
     class str {
     public:
         /**
-         *
+         * Allows all other str<M> (where M can be different from N) to access
+         * the private members.
+         * @tparam M Compile-time length of string.
          */
         template <size_t M>
         friend class str;
 
         /**
-         *
+         * Constructor to accept an array of chars which include the null char.
+         * @param rhs Array of chars
          */
         constexpr str(const std::array<char, N> &rhs);
 
         /**
-         *
+         * Allows concatenation of two compile-time strs.
+         * @tparam N0 Compile-time length of LHS string.
+         * @tparam N1 Compile-time length of RHS string.
+         * @param lhs Left hand side compile-time str.
+         * @param rhs Right hand side compile-time str.
+         * @return Concatenated str containing lhs and rhs, stripping away the
+         * null char of lhs and retaining the null char of rhs.
          */
         template <size_t N0, size_t N1>
         friend constexpr auto operator+(
@@ -39,15 +49,14 @@ namespace metta {
             const str<N1> &rhs) -> str<N0 + N1 - 1>;
 
         /**
-         *
-         */
-        template <size_t N0, size_t N1>
-        friend constexpr auto operator+(
-            const str<N0> &lhs,
-            const char (&rhs)[N1]) -> str<N0 + N1 - 1>;
-
-        /**
-         *
+         * Allows concatenation of two compile-time strs, of which LHS is a
+         * char array.
+         * @tparam N0 Compile-time length of LHS string.
+         * @tparam N1 Compile-time length of RHS string.
+         * @param lhs Left hand side compile-time char array.
+         * @param rhs Right hand side compile-time str.
+         * @return Concatenated str containing lhs and rhs, stripping away the
+         * null char of lhs and retaining the null char of rhs.
          */
         template <size_t N0, size_t N1>
         friend constexpr auto operator+(
@@ -55,19 +64,42 @@ namespace metta {
             const str<N1> &rhs) -> str<N0 + N1 - 1>;
 
         /**
-         *
+         * Allows concatenation of two compile-time strs, of which RHS is a
+         * char array.
+         * @tparam N0 Compile-time length of LHS string.
+         * @tparam N1 Compile-time length of RHS string.
+         * @param lhs Left hand side compile-time str.
+         * @param rhs Right hand side compile-time char array.
+         * @return Concatenated str containing lhs and rhs, stripping away the
+         * null char of lhs and retaining the null char of rhs.
+         */
+        template <size_t N0, size_t N1>
+        friend constexpr auto operator+(
+            const str<N0> &lhs,
+            const char (&rhs)[N1]) -> str<N0 + N1 - 1>;
+
+        /**
+         * Performs string comparison between LHS and RHS strs.
+         * @tparam M Compile-time length of the RHS str.
+         * @param rhs Right hand side compile-time str for string comparison.
+         * @return true if both strs contain the same char values.
          */
         template <size_t M>
         constexpr auto operator==(const str<M> &rhs) const -> bool;
 
         /**
-         *
+         * Performs string comparison between LHS and RHS strs.
+         * @tparam M Compile-time length of the RHS char array.
+         * @param rhs Right hand side compile-time str for string comparison.
+         * @return true if both strs contain the same char values.
          */
         template <size_t M>
         constexpr auto operator==(const char (&rhs)[M]) const -> bool;
 
         /**
-         *
+         * Gets the char array representation in pointer form.
+         * @return Char pointer pointing to the start of char array
+         * representation.
          */
         constexpr auto c_str() const -> const char *;
 
@@ -78,18 +110,55 @@ namespace metta {
         std::array<char, N> val;
     };
     
+    /**
+     * Allows concatenation of two compile-time strs
+     * @tparam N0 Compile-time length of LHS string.
+     * @tparam N1 Compile-time length of RHS string.
+     * @param lhs Left hand side compile-time str.
+     * @param rhs Right hand side compile-time str.
+     * @return Concatenated str containing lhs and rhs, stripping away the null
+     * char of lhs and retaining the null char of rhs.
+     */
     template <size_t N, size_t M>
     constexpr auto concat(const str<N> &lhs, const str<M> &rhs)
         -> str<N + M - 1>;
 
+    /**
+     * Allows concatenation of two compile-time strs, of which LHS is a char
+     * array.
+     * @tparam N0 Compile-time length of LHS string.
+     * @tparam N1 Compile-time length of RHS string.
+     * @param lhs Left hand side compile-time char array.
+     * @param rhs Right hand side compile-time str.
+     * @return Concatenated str containing lhs and rhs, stripping away the null
+     * char of lhs and retaining the null char of rhs.
+     */
     template <size_t N, size_t M>
     constexpr auto concat(const char (&lhs)[N], const str<M> &rhs)
         -> str<N + M - 1>;
 
+    /**
+     * Allows concatenation of two compile-time strs, of which RHS is a char
+     * array.
+     * @tparam N0 Compile-time length of LHS string.
+     * @tparam N1 Compile-time length of RHS string.
+     * @param lhs Left hand side compile-time str.
+     * @param rhs Right hand side compile-time char array.
+     * @return Concatenated str containing lhs and rhs, stripping away the null
+     * char of lhs and retaining the null char of rhs.
+     */
     template <size_t N, size_t M>
     constexpr auto concat(const str<N> &lhs, const char (&rhs)[M])
         -> str<N + M - 1>;
 
+    /**
+     * Creates a compile-time str class instance representation from the given
+     * char array values.
+     * @tparam N Compile-time length of given char array.
+     * @param v Char array with a known compile-time length.
+     * @return str class instance representation with the same char array
+     * values.
+     */
     template <size_t N>
     constexpr auto make_str(const char (&v)[N]) -> str<N>;
 
@@ -173,17 +242,17 @@ namespace metta {
     }
 
     template <size_t N0, size_t N1>
-    constexpr auto operator+(const str<N0> &lhs, const char (&rhs)[N1])
-        -> str<N0 + N1 - 1> {
-
-        return lhs + make_str(rhs);
-    }
-
-    template <size_t N0, size_t N1>
     constexpr auto operator+(const char (&lhs)[N0], const str<N1> &rhs)
         -> str<N0 + N1 - 1> {
 
         return make_str(lhs) + rhs;
+    }
+
+    template <size_t N0, size_t N1>
+    constexpr auto operator+(const str<N0> &lhs, const char (&rhs)[N1])
+        -> str<N0 + N1 - 1> {
+
+        return lhs + make_str(rhs);
     }
 
     template <size_t N>
