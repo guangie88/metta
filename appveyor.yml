@@ -1,6 +1,6 @@
 environment:
   global:
-    PROJECT_NAME: spdlog_setup
+    PROJECT_NAME: metta
 
   matrix:
      - GENERATOR: "Visual Studio 14"
@@ -16,4 +16,4 @@ build_script:
   - mkdir build
   - cd build
   - cmake .. -G "%GENERATOR% Win64"
-  - msbuild /m:4 /p:Configuration=%CONFIG% spdlog_setup.sln
+  - msbuild /m:4 /p:Configuration=%CONFIG% metta.sln

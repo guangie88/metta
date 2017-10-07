@@ -1,6 +1,10 @@
 # metta
 Compile-time string / char array with constexpr methods only.
 
+[![Build Status](https://travis-ci.org/guangie88/metta.svg?branch=master)](https://travis-ci.org/guangie88/metta)
+[![Build status](https://ci.appveyor.com/api/projects/status/6xjxiuwi62cj7bls/branch/master?svg=true)](https://ci.appveyor.com/project/guangie88/metta/branch/master)
+[![codecov](https://codecov.io/gh/guangie88/metta/branch/master/graph/badge.svg)](https://codecov.io/gh/guangie88/metta)
+
 ## Motivation
 Allows for named string reuse at different sites at compile-time, which could be useful for error messages with similar headings.
 
